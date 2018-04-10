@@ -52,13 +52,15 @@ public class MainActivity extends AppCompatActivity
     FragmentManager mFragmentManager;
     FragmentTransaction mFragmentTransaction;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    private ViewPager mViewPager,deptViewPager;
     private TabLayout Tabs;
     MenuItem Admission;
     private FrameLayout mFrame;
     public String url="http://192.168.43.108/SEC/Applicant/Admission_Status.php";
     int dr;
 
+    private DepartmentsPagerAdapter departmentsPagerAdapter;
+ 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(mSectionsPagerAdapter);
         Tabs.setupWithViewPager(mViewPager);
 
+        deptViewPager=findViewById(R.id.containerDeptTabs);
+        departmentsPagerAdapter= new DepartmentsPagerAdapter(getSupportFragmentManager());
      /*   Tabs.getTabAt(0).setIcon(R.drawable.tab_icon_home);
         Tabs.getTabAt(1).setIcon(R.drawable.tab_icon_schedule);
         Tabs.getTabAt(2).setIcon(R.drawable.tab_icon_acc);*/
@@ -189,6 +193,8 @@ public class MainActivity extends AppCompatActivity
 
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+            deptViewPager.setVisibility(GONE);
+            Tabs.setTabMode(MODE_FIXED);
             Tabs.setVisibility(View.VISIBLE);
             mFrame.setVisibility(View.GONE);
             mViewPager.setVisibility(View.VISIBLE);
@@ -202,20 +208,25 @@ public class MainActivity extends AppCompatActivity
             mViewPager.setAdapter(null);
             mFrame.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.GONE);
-            Tabs.setVisibility(View.GONE);
+            Tabs.setVisibility(View.VISIBLE);
+            Tabs.setTabMode(GRAVITY_FILL);
+            deptViewPager.setVisibility(View.VISIBLE);
+            deptViewPager.setAdapter(departmentsPagerAdapter);
+            Tabs.setupWithViewPager(deptViewPager);
            /* Fragment4 fragInfo = new Fragment4();
             openfrag(fragInfo);*/
 
-            Intent i = new Intent(MainActivity.this, Admission_Help.class);
-            startActivity(i);
+            /*Intent i = new Intent(MainActivity.this, Admission_Help.class);
+            startActivity(i);*/
 
         } else if (id == R.id.nav_admission) {
 
             params.setScrollFlags(0);
-            mViewPager.setAdapter(null);
+            mViewPager.setAdapter(null);            
             mFrame.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.GONE);
             Tabs.setVisibility(View.GONE);
+            deptViewPager.setVisibility(GONE);
             Fragment_Admission fragInfo = new Fragment_Admission();
             openfrag(fragInfo);
 
@@ -225,6 +236,7 @@ public class MainActivity extends AppCompatActivity
             mFrame.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.GONE);
             Tabs.setVisibility(View.GONE);
+            deptViewPager.setVisibility(GONE);
             Fragment_endless fragInfod = new Fragment_endless();
             openfrag(fragInfod);
         }
@@ -278,6 +290,46 @@ public class MainActivity extends AppCompatActivity
                     return "Schedules";
                 case 2:
                     return "Account";
+            }
+            return null;
+        }
+    }
+    
+     public class DepartmentsPagerAdapter extends FragmentPagerAdapter {
+
+        public DepartmentsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Bundle b = new Bundle();
+            Fragment dept;
+            switch (position){
+                case 0 : b.putString("stream","Arts"); dept= new DeptFragment(); dept.setArguments(b); return dept;
+                case 1 : b.putString("stream","Commerce"); dept= new DeptFragment(); dept.setArguments(b); return dept;//CommerceFragment();
+                case 2 : b.putString("stream","Science"); dept= new DeptFragment(); dept.setArguments(b); return dept;//ScienceFragment();
+                case 3 : b.putString("stream","Pro"); dept= new DeptFragment(); dept.setArguments(b); return dept;//ProFragment();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Arts";
+                case 1:
+                    return "Commerce";
+                case 2:
+                    return "Science";
+                case 3:
+                    return "Professional";
             }
             return null;
         }
